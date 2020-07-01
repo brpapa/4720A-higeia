@@ -1,2 +1,68 @@
-@import '../node_modules/bootstrap/scss/bootstrap'; // all bootstrap sass
+// Override Bootstrap
+
+$primary: #14228b;
+$secondary: #FF2281;
+$bg-color: #FAFAFA;
+
+// Import all of Bootstrap's CSS
+@import 'bootstrap/scss/bootstrap';
+
+// Or import just the styles you need. Note that some stylesheets are required no matter what.
+
+// @import 'bootstrap/scss/_functions'; // Required
+// @import 'bootstrap/scss/_variables'; // Required
+// @import 'bootstrap/scss/_mixins'; // Required
+// @import "bootstrap/scss/_root";
+// @import 'bootstrap/scss/_reboot'; // Required
+// @import 'bootstrap/scss/_type';
+// @import "bootstrap/scss/_images";
+// @import "bootstrap/scss/_code";
+// @import 'bootstrap/scss/_grid';
+// @import "bootstrap/scss/_tables";
+// @import "bootstrap/scss/_forms";
+// @import 'bootstrap/scss/_buttons';
+// @import 'bootstrap/scss/_transitions';
+// @import "bootstrap/scss/_dropdown";
+// @import "bootstrap/scss/_button-group";
+// @import "bootstrap/scss/_input-group"; // Requires forms
+// @import "bootstrap/scss/_custom-forms";
+// @import "bootstrap/scss/_nav";
+// @import "bootstrap/scss/_navbar"; // Requires nav
+// @import "bootstrap/scss/_card";
+// @import "bootstrap/scss/_breadcrumb";
+// @import "bootstrap/scss/_pagination";
+// @import "bootstrap/scss/_badge";
+// @import "bootstrap/scss/_jumbotron";
+// @import "bootstrap/scss/_alert";
+// @import "bootstrap/scss/_progress";
+// @import "bootstrap/scss/_media";
+// @import "bootstrap/scss/_list-group";
+// @import 'bootstrap/scss/_close';
+// @import "bootstrap/scss/_toasts";
+// @import 'bootstrap/scss/_modal'; // Requires transitions
+// @import "bootstrap/scss/_tooltip";
+// @import "bootstrap/scss/_popover";
+// @import "bootstrap/scss/_carousel";
+// @import "bootstrap/scss/_spinners";
+// @import "bootstrap/scss/_utilities";
+// @import "bootstrap/scss/_print";
+
+// Custom styles
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  background-color: $bg-color;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
