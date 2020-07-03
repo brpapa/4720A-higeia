@@ -1,23 +1,29 @@
 const { Router } = require('express')
+
+const auth = require('./middlewares/auth')
+const user = require('./controllers/user')
 const patient = require('./controllers/patient')
 const doctor = require('./controllers/doctor')
-const user = require('./controllers/_user')
-const auth = require('./auth')
+const appt = require('./controllers/appointment')
 
 module.exports = Router()
-  .post('/register', () => {})
-  .get('/login', auth, (_, res) => res.sendStatus(202))
+  .get('/login/:id', auth, user.who) // retorna se o usuário é patient ou doctor
 
-  .get('/patients', auth, patient.index) // retorna dados de todos os pacientes
-  .post('/patients', auth, patient.store) // registra um novo paciente
-  .get('/patients/:id', auth, patient.show) // retorna dados do paciente com o id
-  .put('/patients/:id', auth, patient.update) // atualiza o paciente registrado com o id
-  .delete('/patients/:id', auth, patient.delete) // delete o paciente registrado com o id
+  .get('/patients', auth, patient.index) // retorna todos os dados de todos os pacientes
+  .get('/doctors', auth, doctor.index) // retorna todos os dados de todos os doutores
+  .get('/appointments/:user/:id', auth, appt.index) // retorna todos os dados de todas as consultas de um usuário ('patient' or 'doctor'), possivelmente filtrando com um `status` query param
 
-  .get('/doctors', auth, doctor.index) // retorna dados de todos os doutores
-  .post('/doctors', auth, doctor.store) // registra um novo doutor
-  .get('/doctors/:id', auth, doctor.show) // retorna dados do doutor com o id
-  .put('/doctors/:id', auth, doctor.update) // atualiza o doutor registrado com o id
-  .delete('/doctors/:id', auth, doctor.delete) // delete o doutor registrado com o id
+  .get('/patients/:id', auth, patient.show) // retorna todos os dados de um paciente
+  .get('/doctors/:id', auth, doctor.show) // retorna todos os dados de um doutor
 
-  .get('/test', (req, res) => {})
+  .post('/patients', patient.store) // TODO: registra um novo paciente
+  .post('/doctors', doctor.store) // TODO: registra um novo doutor
+  .post('/appointments', auth, appt.store) // DOING: registra uma nova consulta, passando no body `patient_id`, `doctor_id`
+  
+  .put('/patients/:id', auth, patient.update) // TODO: atualiza um paciente
+  .put('/doctors/:id', auth, doctor.update) // TODO: atualiza um doutor
+  
+  .delete('/patients/:id', auth, patient.delete) // TODO: deleta um paciente
+  .delete('/doctors/:id', auth, doctor.delete) // TODO: deleta um doutor
+
+  // .get('/test', (req, res) => {})
