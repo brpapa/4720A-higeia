@@ -8,7 +8,6 @@ module.exports = {
     'dob',
     'gender',
     'email',
-    'phone',
-    'profile_image_url',
+    'phone'
   ],
 }

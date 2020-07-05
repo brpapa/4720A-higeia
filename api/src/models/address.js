@@ -1,4 +1,4 @@
 module.exports = {
-  table: 'location',
+  table: 'address',
   attrs: ['id', 'uf', 'city', 'street', 'number'],
 }

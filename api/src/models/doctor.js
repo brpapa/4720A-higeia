@@ -1,4 +1,4 @@
 module.exports = {
   table: 'doctor',
-  attrs: ['id', 'specialization_id', 'medical_care_location_id', 'rating'],
+  attrs: ['id', 'crm_number', 'specialization_id', 'medical_care_location_id', 'avg_rating'],
 }

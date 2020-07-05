@@ -1,13 +1,14 @@
 module.exports = {
   table: 'appointment',
   attrs: [
-    'start',
-    'end',
+    'id',
+    'start_date',
+    'start_time',
     'doctor_id',
     'patient_id',
     'status',
     'doctor_diagnosis',
     'doctor_notes',
-    'score',
+    'rating',
   ],
 }
