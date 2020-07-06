@@ -1,0 +1,32 @@
+@import '~antd/dist/antd.css';
+
+// Override Bootstrap
+
+$light: #FAFAFA;
+$dark: #052425;
+$color: #A6BDBB;
+
+$primary: #3F595B; // TODO
+$secondary: #6CB2B2;
+
+$sucess: #4ee485; // TODO
+$warning: #FB9119;
+$danger: #FF2281;
+
+// @import 'bootstrap/scss/bootstrap';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  background-color: $light;
+
+  font-family: sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
