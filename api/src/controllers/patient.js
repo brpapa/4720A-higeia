@@ -2,18 +2,20 @@ const db = require('../db')
 const handleError = require('../utils/handleQueryError')
 const user = require('../models/user')
 const patient = require('../models/patient')
-const location = require('../models/location')
+const address = require('../models/address')
 
 const selectPatients = `
-SELECT ${user.attrs.slice(2)
-  .concat(patient.attrs.slice(2))
-  .concat(location.attrs.slice(1).map((attr) => `${attr} as address_${attr}`))
-  .join(',')}
+SELECT ${
+  user.attrs.filter(attr => attr !== 'password').map(attr => `${user.table}.${attr}`)
+  .concat(patient.attrs.filter(attr => !attr.includes('id')))
+  .concat(address.attrs.filter(attr => !attr.includes('id')).map((attr) => `${attr} as address_${attr}`))
+  .join(',')
+}
 FROM ${user.table}
   INNER JOIN ${patient.table}
   USING (id)
-  INNER JOIN ${location.table}
-  ON ${patient.table}.address_id = ${location.table}.id
+  INNER JOIN ${address.table}
+  ON ${patient.table}.address_id = ${address.table}.id
 ` // prettier-ignore
 
 module.exports = {
@@ -26,6 +28,7 @@ module.exports = {
       return res.status(200).json(results)
     })
   },
+  // TODO
   store: (req, res) => {
     return res.sendStatus(201)
   },
@@ -43,6 +46,8 @@ module.exports = {
       }
     )
   },
-  update: () => {},
+  // TODO
+  update: () => { },
+  // TODO
   delete: () => {},
 }

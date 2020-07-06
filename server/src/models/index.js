@@ -1,1 +1,0 @@
-// TODO: aqui deve ser definido o esquema de cada tabela no banco, e nao a conecção com o banco

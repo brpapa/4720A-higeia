@@ -2,7 +2,7 @@ module.exports = {
   table: 'appointment',
   attrs: [
     'id',
-    'start_date',
+    'date',
     'start_time',
     'doctor_id',
     'patient_id',

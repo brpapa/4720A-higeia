@@ -1,6 +1,6 @@
-require('dotenv').config({ silent: true })
+require('dotenv').config()
 
-const port = Number(process.env.PORT) || 3000
+const port = Number(process.env.PORT) || 3030
 const env = String(process.env.NODE_ENV) || 'development'
 
 const db_by_env = {

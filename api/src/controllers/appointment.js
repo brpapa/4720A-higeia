@@ -7,9 +7,11 @@ const handleError = require('../utils/handleQueryError')
 const appt = require('../models/appointment')
 
 const createSelectAppts = (user) => `
-SELECT ${appt.attrs
+SELECT ${
+  appt.attrs
   .filter((attr) => attr !== `${user}_id`)
-  .join(',')}
+  .join(',')
+}
 FROM ${appt.table}
 WHERE ${user}_id = ?
 ` // prettier-ignore
@@ -25,12 +27,23 @@ module.exports = {
       (err, results) => {
         if (err) { handleError(err); return res.sendStatus(500) } // prettier-ignore
 
+        // console.log(results[0].start.getHours())
+        // console.log(results[0].start.getUTCHours())
         return res.status(200).json(results)
       }
     )
   },
   store: (req, res) => {
-    const { patient_id, doctor_id } = req.body
-    return res.sendStatus(201)
+    const { patient_id, doctor_id, date, start_time } = req.body
+
+    db.query(
+      "INSERT INTO appointment(date, start_time, doctor_id, patient_id, status) VALUES (?, ?, ?, ?, 'scheduled')",
+      [date, start_time, doctor_id, patient_id],
+      (err) => {
+        if (err) { handleError(err); return res.sendStatus(500) } // prettier-ignore
+
+        return res.sendStatus(201)
+      }
+    )
   },
 }
