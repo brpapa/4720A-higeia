@@ -124,7 +124,7 @@ INSERT INTO `appointment`(`date`, `start_time`, `doctor_id`, `patient_id`, `stat
   ('2020-07-01', '10:00', 'bruno', 'fabio', 'completed', '', '', 3),
   ('2020-07-01', '14:00', 'bruno', 'thales', 'completed', '', '', 5);
 
--- insere futuras consultas
+-- insere consultas futuras
 INSERT INTO `appointment`(`date`, `start_time`, `doctor_id`, `patient_id`, `status`) VALUES
   ('2020-07-27', '08:00', 'bruno', 'fabio', 'scheduled'),
   ('2020-07-28', '10:00', 'bruno', 'fabio', 'scheduled'),

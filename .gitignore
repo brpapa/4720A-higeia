@@ -1,0 +1,6 @@
+_*
+.env
+
+web/node_modules
+web/build
+
