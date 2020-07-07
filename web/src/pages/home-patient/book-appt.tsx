@@ -1,24 +1,27 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { List, Tag, Modal, Button, DatePicker, Select } from 'antd'
+import { List, Tag, Modal, Button, DatePicker, Select, Card } from 'antd'
 import moment from 'moment'
 
 import { TGender } from '../../types'
 import api from '../../services/api'
 import Rate from '../../ui/rate'
 import Avatar from '../../ui/avatar'
-import { UserContext } from '../home'
+import DoctorLink from '../../ui/doctor-link'
+import { UserContext } from '../home-user'
 
-type TDoctor = { [K: string]: string } & { gender: TGender }
-const apiMap = (doctor: TDoctor) => ({
+const mapDoctorFromApi = (
+  doctor: { [K: string]: string } & { gender: TGender }
+) => ({
   id: doctor.id,
-  fullName: `${doctor.first_name} ${doctor.last_name}`,
   gender: doctor.gender,
   spec: doctor.specialization_title,
   avgRating: Number(doctor.avg_rating),
 })
 
-const DoctorsList: React.FC = () => {
-  const [doctors, setDoctors] = useState<ReturnType<typeof apiMap>[]>([])
+export default () => {
+  const [doctors, setDoctors] = useState<ReturnType<typeof mapDoctorFromApi>[]>(
+    []
+  )
   const [modalVisible, setModalVisible] = useState(false)
   const [modalConfirmLoading, setModalConfirmLoading] = useState(false)
 
@@ -35,7 +38,7 @@ const DoctorsList: React.FC = () => {
     api
       .get('/doctors')
       .then(({ data: doctors }) => {
-        setDoctors(doctors.map(apiMap))
+        setDoctors(doctors.map(mapDoctorFromApi))
       })
       .catch(console.log)
   }, [])
@@ -84,23 +87,35 @@ const DoctorsList: React.FC = () => {
   return (
     <>
       <List
-        header={'Agende uma consulta com um doutor'}
-        itemLayout='horizontal'
+        // header='Encontre um doutor'
+        grid={{ gutter: 8, column: 3 }}
         dataSource={doctors}
         renderItem={(doctor) => (
           <List.Item>
-            <List.Item.Meta
-              avatar={<Avatar user='doctor' gender={doctor.gender} size='sm' />}
-              title={doctor.fullName}
-            />
-            <Tag>{doctor.spec}</Tag>
-            <Rate disabled allowHalf defaultValue={doctor.avgRating} />
-            <Button onClick={() => handleModalOpen(doctor.id)}>Agendar</Button>
+            <Card
+              title={
+                <>
+                  <Avatar user='doctor' gender={doctor.gender} size='sm' />
+                  <DoctorLink username={doctor.id} />
+                  <br />
+                  <Rate disabled allowHalf defaultValue={doctor.avgRating} />
+                </>
+              }
+            >
+              <Tag>{doctor.spec}</Tag>
+              <Button onClick={() => handleModalOpen(doctor.id)}>
+                Agendar
+              </Button>
+            </Card>
           </List.Item>
         )}
       />
       <Modal
-        title='Selecionar horário disponível'
+        title={
+          <>
+            Agendar consulta com <DoctorLink username={doctorId} />
+          </>
+        }
         visible={modalVisible}
         confirmLoading={modalConfirmLoading}
         onOk={handleModalOk}
@@ -122,12 +137,13 @@ const DoctorsList: React.FC = () => {
             />
           </div>
           <div>
-            <p>{'Horário: '}</p>
+            <p>{'Horários livres: '}</p>
             <Select
               defaultValue=''
-              placeholder='Horário'
+              placeholder='Horários'
               disabled={date === ''}
               style={{ width: 120 }}
+              value={time}
               onChange={(time) => setTime(time)}
             >
               {selectableTimes.map((time) => (
@@ -142,5 +158,3 @@ const DoctorsList: React.FC = () => {
     </>
   )
 }
-
-export default DoctorsList

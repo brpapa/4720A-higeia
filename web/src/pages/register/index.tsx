@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { TUser, TGender } from './../types'
+import { TUser, TGender } from '../../types'
 
 // TODO
 const Register = () => {

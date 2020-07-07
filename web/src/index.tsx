@@ -5,7 +5,7 @@ import { BrowserRouter, Switch } from 'react-router-dom'
 import './index.scss'
 import UnloggedRoute from './utils/unlogged-route'
 import LoggedRoute from './utils/logged-route'
-import Home from './pages/home'
+import Home from './pages/home-user'
 import Login from './pages/login'
 import Register from './pages/register'
 
