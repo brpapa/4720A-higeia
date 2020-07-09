@@ -4,20 +4,6 @@ const user = require('../models/user')
 const patient = require('../models/patient')
 const address = require('../models/address')
 
-const selectPatients = `
-SELECT ${
-  user.attrs.filter(attr => attr !== 'password').map(attr => `${user.table}.${attr}`)
-  .concat(patient.attrs.filter(attr => !attr.includes('id')))
-  .concat(address.attrs.filter(attr => !attr.includes('id')).map((attr) => `${attr} as address_${attr}`))
-  .join(',')
-}
-FROM ${user.table}
-  INNER JOIN ${patient.table}
-  USING (id)
-  INNER JOIN ${address.table}
-  ON ${patient.table}.address_id = ${address.table}.id
-` // prettier-ignore
-
 module.exports = {
   index: (_, res) => {
     // const {} = req.query
@@ -47,7 +33,29 @@ module.exports = {
     )
   },
   // TODO
-  update: () => { },
+  update: () => {},
   // TODO
   delete: () => {},
 }
+
+const selectPatients = `
+SELECT ${user.attrs
+  .filter((attr) => attr !== 'password')
+  .map((attr) => `${user.table}.${attr}`)
+  .concat(
+    patient.attrs
+      .filter((attr) => !attr.includes('id'))
+      .map((attr) => `${patient.table}.${attr}`)
+  )
+  .concat(
+    address.attrs
+      .filter((attr) => !attr.includes('id'))
+      .map((attr) => `${address.table}.${attr} as address_${attr}`)
+  )
+  .join(',')}
+FROM ${user.table}
+  INNER JOIN ${patient.table}
+  USING (id)
+  INNER JOIN ${address.table}
+  ON ${patient.table}.address_id = ${address.table}.id
+`

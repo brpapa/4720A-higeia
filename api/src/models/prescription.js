@@ -10,7 +10,5 @@ module.exports = {
     'dose_unit',
     'frequency',
     'frequency_per',
-    'duration',
-    'duration_in',
   ],
 }

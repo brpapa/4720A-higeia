@@ -16,4 +16,4 @@ express()
   // rotas
   .use(routes)
 
-  .listen(port, () => console.log(`Server is running on port ${port}`))
+  .listen(port, () => console.log(`API is running on port ${port}`))
