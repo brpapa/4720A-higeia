@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Row, Col, Button } from 'antd'
+import { Row, Col, Button, Popconfirm, message } from 'antd'
 
 import auth from '../../auth'
 import api from '../../services/api'
@@ -36,6 +36,16 @@ export default () => {
     history.replace('/login')
   }
 
+  function handleDelete() {
+    api
+      .delete(`users/${username}`)
+      .then(() => {
+        handleLogout()
+        message.success('Conta deletada!')
+      })
+      .catch((err) => console.log(err))
+  }
+
   return (
     <>
       <Row
@@ -48,9 +58,19 @@ export default () => {
       >
         <Col flex='120px'></Col>
         <Col flex='auto'>
-          <Row justify='space-between' align='middle'>
-            <Col>{fullName}</Col>
-            <Col>
+          <Row align='middle'>
+            <Col span={6}>{fullName}</Col>
+            <Col span={6} offset={12}>
+              <Popconfirm
+                title='Você tem certeza disso?'
+                onConfirm={handleDelete}
+                okText='Sim'
+                cancelText='Não'
+              >
+                <Button type='link' danger>
+                  Deletar conta
+                </Button>
+              </Popconfirm>
               <Button type='link' onClick={handleLogout}>
                 Sair
               </Button>

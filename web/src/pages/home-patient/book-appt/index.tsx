@@ -1,33 +1,40 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { List, Tag, Modal, Button, DatePicker, Select, Card } from 'antd'
+import {
+  List,
+  Tag,
+  Modal,
+  Form,
+  Button,
+  DatePicker,
+  Select,
+  Card,
+  message,
+} from 'antd'
 import moment from 'moment'
 
-import { TGender } from '../../types'
-import api from '../../services/api'
-import Rate from '../../ui/rate'
-import Avatar from '../../ui/avatar'
-import DoctorLink from '../../ui/doctor-link'
-import { UserContext } from '../home-user'
+import { TGender } from '../../../types'
+import api from '../../../services/api'
+import Rate from '../../../ui/rate'
+import Avatar from '../../../ui/avatar'
+import DoctorLink from '../../../ui/doctor-link'
+import { UserContext } from '../../home-user'
 
-const mapDoctorFromApi = (
-  doctor: { [K: string]: string } & { gender: TGender }
-) => ({
+// mapeia os doutores que vieram da api
+const mapDoctor = (doctor: { [K: string]: string } & { gender: TGender }) => ({
   id: doctor.id,
   gender: doctor.gender,
   spec: doctor.specialization_title,
-  avgRating: Number(doctor.avg_rating),
+  avgRating: Number(doctor.avg_rating), // 0 se for nulo
 })
 
 export default () => {
-  const [doctors, setDoctors] = useState<ReturnType<typeof mapDoctorFromApi>[]>(
-    []
-  )
+  const [doctors, setDoctors] = useState<ReturnType<typeof mapDoctor>[]>([])
   const [modalVisible, setModalVisible] = useState(false)
   const [modalConfirmLoading, setModalConfirmLoading] = useState(false)
 
   // dados enviados para api
   const { username: patientId } = useContext(UserContext)
-  const [doctorId, setDoctorId] = useState('')
+  const [doctorId, setDoctorId] = useState('') // doutor selecionado
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
 
@@ -38,7 +45,7 @@ export default () => {
     api
       .get('/doctors')
       .then(({ data: doctors }) => {
-        setDoctors(doctors.map(mapDoctorFromApi))
+        setDoctors(doctors.map(mapDoctor))
       })
       .catch(console.log)
   }, [])
@@ -66,22 +73,33 @@ export default () => {
     setDate('')
     setTime('')
   }
+  // cadastra nova consulta com status 'scheduled'
   function handleModalOk() {
     if ([doctorId, date, time].some((v) => v === '')) return
 
+    message.loading({ content: 'Carregando...', key: 'msg' })
     setModalConfirmLoading(true)
+
     api
       .post('/appointments', {
         doctor_id: doctorId,
         patient_id: patientId,
         date: date,
         start_time: time,
+        status: 'scheduled',
       })
       .then(() => {
+        message.success({
+          content: 'Consulta agendada com sucesso!',
+          key: 'msg',
+        })
         setModalConfirmLoading(false)
         setModalVisible(false)
       })
-      .catch(console.log)
+      .catch((err) => {
+        console.log(err)
+        message.error({ content: 'Erro!', key: 'msg' })
+      })
   }
 
   return (
@@ -99,10 +117,11 @@ export default () => {
                   <DoctorLink username={doctor.id} />
                   <br />
                   <Rate disabled allowHalf defaultValue={doctor.avgRating} />
+                  <br />
+                  <Tag>{doctor.spec}</Tag>
                 </>
               }
             >
-              <Tag>{doctor.spec}</Tag>
               <Button onClick={() => handleModalOpen(doctor.id)}>
                 Agendar
               </Button>
@@ -124,20 +143,20 @@ export default () => {
         cancelText='Cancelar'
       >
         {/* Conteúdo do Modal */}
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <div>
-            <p>{'Data: '}</p>
+        <Form layout='horizontal'>
+          <Form.Item label='Data'>
             <DatePicker
-              format='YYYY-MM-DD'
+              format='DD-MM-YYYY'
               placeholder=''
               disabledDate={(current) =>
                 current && current < moment().endOf('day')
               }
-              onChange={(_, date) => setDate(date)}
+              onChange={(_, date) =>
+                setDate(moment(date, 'DD-MM-YYYY').format('YYYY-MM-DD'))
+              }
             />
-          </div>
-          <div>
-            <p>{'Horários livres: '}</p>
+          </Form.Item>
+          <Form.Item label='Horários livres'>
             <Select
               defaultValue=''
               placeholder='Horários'
@@ -152,8 +171,8 @@ export default () => {
                 </Select.Option>
               ))}
             </Select>
-          </div>
-        </div>
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   )

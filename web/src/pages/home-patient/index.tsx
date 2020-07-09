@@ -4,6 +4,7 @@ import { Tabs } from 'antd'
 
 import BookAppt from './book-appt'
 import Appts from './appts'
+import ActivePrescriptions from './active-prescriptions'
 
 export default () => {
   return (
@@ -11,17 +12,19 @@ export default () => {
       <Route exact path='/'>
         <Tabs
           defaultActiveKey='1'
-          onChange={console.log}
           style={{ margin: '0px 20px 0px 20px' }}
         >
-          <Tabs.TabPane tab='Próximas consultas' key='1'>
+          <Tabs.TabPane tab='Agendar consulta' key='1'>
+            <BookAppt />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab='Prescrições em vigor' key='2'>
+            <ActivePrescriptions />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab='Próximas consultas agendadas' key='3'>
             <Appts filter='scheduled' />
           </Tabs.TabPane>
-          <Tabs.TabPane tab='Últimas consultas' key='2'>
+          <Tabs.TabPane tab='Últimas consultas completadas' key='4'>
             <Appts filter='completed' />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab='Agendar consulta' key='3'>
-            <BookAppt />
           </Tabs.TabPane>
         </Tabs>
       </Route>

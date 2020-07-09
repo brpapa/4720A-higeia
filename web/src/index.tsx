@@ -7,7 +7,7 @@ import UnloggedRoute from './utils/unlogged-route'
 import LoggedRoute from './utils/logged-route'
 import Home from './pages/home-user'
 import Login from './pages/login'
-import Register from './pages/register'
+// import Register from './pages/register'
 
 const App = () => {
   return (
@@ -17,7 +17,7 @@ const App = () => {
       {/* o componente da 1a rota com path igual à url atual será rendererizado; no caso, todas as rotas são privadas, com excessão de /login e /register */}
       <Switch>
         <UnloggedRoute path='/login' component={Login} />
-        <UnloggedRoute path='/register' component={Register} />
+        {/* <UnloggedRoute path='/register' component={Register} /> */}
         <LoggedRoute path='/' component={Home} />
       </Switch>
     </BrowserRouter>
