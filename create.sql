@@ -1,21 +1,6 @@
--- DBMS: MySQL
+-- SGBD: MySQL
 
--- uma tupla fk é ON DELETE RESTRICT ON UPDATE RESTRICT por padrao, ou seja, uma remocao ou atualizacao na pk da tabela que está sendo referenciada não é permitida se houver alguma tupla que ainda a referencia
-
--- uma tupla fk com ON DELETE CASCADE ON UPDATE CASCADE, por outro lado, é automaticamente apagada/atualizada se a pk da tabela referenciada for deletada/atualizada
-
--- uma UNIQUE KEY pode ser nula
-
--- MySQL só aceita um evento por trigger
-
--- date/time data types: (se insere/recupera na zona local, mas MySQL armazena em GMT)
--- TIME = 'hh:mm:ss'
--- DATE = 'yyyy-mm-dd'
--- TIMESTAMP = 'yyyy-mm-dd hh:mm:ss'
-
--- https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_dayname
-
--- *** TABLES *** --
+-- *** TABELAS *** --
 
 DROP TABLE IF EXISTS `health_quote`;
 DROP TABLE IF EXISTS `prescription`;
@@ -101,7 +86,7 @@ CREATE TABLE `doctor` (
 	  REFERENCES `doctor_specialization`(`id`)
 	  ON DELETE RESTRICT ON UPDATE RESTRICT,
 	FOREIGN KEY (`medical_care_location_id`)
-	  REFERENCES `address`(`id`)
+	  REFERENCES `doctor_medical_care_location`(`id`)
 	  ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
@@ -155,13 +140,11 @@ CREATE TABLE `prescription` (
 	`medicine_id` INT NOT NULL,
 
 	`start_date` DATE NOT NULL,
-	`expiration_date` DATE COMMENT 'Derived attribute, maintained with trigger',
+	`expiration_date` DATE NOT NULL,
 	`dose` INT NOT NULL,
 	`dose_unit` ENUM('mg', 'ml', 'pill') NOT NULL,
 	`frequency` INT NOT NULL,
-	`frequency_per` ENUM('hours', 'days') NOT NULL,
-	`duration` INT NOT NULL,
-	`duration_in` ENUM('hours', 'days', 'months') NOT NULL,
+	`frequency_per` ENUM('hour', 'day') NOT NULL,
 
 	PRIMARY KEY (`id`),
   UNIQUE KEY (`appt_id`, `medicine_id`),
@@ -182,16 +165,13 @@ CREATE TABLE `health_quote` (
   UNIQUE KEY (`quote`, `author`)
 );
 
--- *** TRIGGERS *** --
+-- *** GATILHOS *** --
 
 DROP PROCEDURE IF EXISTS `update_avg_rating`;
 DROP TRIGGER IF EXISTS `control_avg_rating_of_doctor_after_insert`;
 DROP TRIGGER IF EXISTS `control_avg_rating_of_doctor_after_delete`;
 DROP TRIGGER IF EXISTS `control_avg_rating_of_doctor_after_update`;
 DROP TRIGGER IF EXISTS `check_appointment_start_time`;
--- DROP TRIGGER IF EXISTS `control_expiration_date_of_prescription_after_insert`;
--- DROP TRIGGER IF EXISTS `control_expiration_date_of_prescription_after_delete`;
--- DROP TRIGGER IF EXISTS `control_expiration_date_of_prescription_after_update`;
 DROP TRIGGER IF EXISTS `check_doctor_disjoint`;
 DROP TRIGGER IF EXISTS `check_patient_disjoint`;
 
@@ -248,27 +228,7 @@ CREATE TRIGGER `control_avg_rating_of_doctor_after_update`
     END IF;
   END $$
 
--- TODO: prescription.expiration_date
--- CREATE TRIGGER `control_expiration_date_of_prescription_after_insert`
---   AFTER INSERT ON `prescription`
---   FOR EACH ROW
--- BEGIN
-
--- END $$
--- CREATE TRIGGER `control_expiration_date_of_prescription_after_delete`
---   AFTER DELETE ON `prescription`
---   FOR EACH ROW
--- BEGIN
-
--- END $$
--- CREATE TRIGGER `control_expiration_date_of_prescription_after_update`
---   AFTER UPDATE ON `prescription`
---   FOR EACH ROW
--- BEGIN
-
--- END $$
-
--- evita a inserção de uma nova consulta em um horário em que o doutor não atende
+-- evita a inserção de uma nova consulta em um horário que o doutor não atende
 CREATE TRIGGER `check_appointment_start_time`
   BEFORE INSERT ON `appointment`
   FOR EACH ROW
@@ -279,7 +239,7 @@ CREATE TRIGGER `check_appointment_start_time`
       WHERE `woh`.`doctor_id`=NEW.`doctor_id` AND `woh`.`weekday`=DAYNAME(NEW.`date`)
     );
     IF @not_exists THEN
-      SET @msg = CONCAT_WS(' ', 'The doctor does not work at', NEW.`start_time`, 'on', DAYNAME(NEW.`date`));
+      SET @msg = CONCAT_WS(' ', 'The doctor', NEW.`doctor_id`, 'does not work at', NEW.`start_time`, 'on', DAYNAME(NEW.`date`));
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
     END IF;
   END $$
