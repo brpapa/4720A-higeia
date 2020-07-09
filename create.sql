@@ -1,4 +1,4 @@
--- SGBD: MySQL
+-- DBMS: MySQL
 
 -- *** TABELAS *** --
 
@@ -127,7 +127,7 @@ CREATE TABLE `appointment` (
 CREATE TABLE `medicine` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
-  `concentration_in_mg` DOUBLE NOT NULL,
+  `concentration_in_mg` DOUBLE NOT NULL CHECK (`concentration_in_mg` > 0),
   `way_of_use` VARCHAR(255) NOT NULL,
 
 	PRIMARY KEY (`id`),
@@ -141,9 +141,9 @@ CREATE TABLE `prescription` (
 
 	`start_date` DATE NOT NULL,
 	`expiration_date` DATE NOT NULL,
-	`dose` INT NOT NULL,
+	`dose` INT NOT NULL CHECK (`dose` > 0),
 	`dose_unit` ENUM('mg', 'ml', 'pill') NOT NULL,
-	`frequency` INT NOT NULL,
+	`frequency` INT NOT NULL CHECK (`frequency` > 0),
 	`frequency_per` ENUM('hour', 'day') NOT NULL,
 
 	PRIMARY KEY (`id`),
@@ -178,7 +178,7 @@ DROP TRIGGER IF EXISTS `check_patient_disjoint`;
 -- necessário para a declaração de 'stored programs', como procedures e triggers
 DELIMITER $$
 
--- recebe o id de um doutor e atualiza o seu novo avg_rating com base no rating de suas consultas que estão 'completed'
+-- recebe o id de um doutor e atualiza o seu avg_rating com base no rating de suas consultas que estão 'completed'
 CREATE PROCEDURE `update_avg_rating`(IN `doctor_id` VARCHAR(255))
   BEGIN
     UPDATE `doctor`
@@ -206,7 +206,6 @@ CREATE TRIGGER `control_avg_rating_of_doctor_after_insert`
       CALL `update_avg_rating`(NEW.`doctor_id`);
     END IF;
   END $$
-
 CREATE TRIGGER `control_avg_rating_of_doctor_after_delete`
   AFTER DELETE ON `appointment`
   FOR EACH ROW
@@ -215,7 +214,6 @@ CREATE TRIGGER `control_avg_rating_of_doctor_after_delete`
       CALL `update_avg_rating`(OLD.`doctor_id`);
     END IF;
   END $$
-
 CREATE TRIGGER `control_avg_rating_of_doctor_after_update`
   AFTER UPDATE ON `appointment`
   FOR EACH ROW
@@ -228,27 +226,37 @@ CREATE TRIGGER `control_avg_rating_of_doctor_after_update`
     END IF;
   END $$
 
--- evita a inserção de uma nova consulta em um horário que o doutor não atende
+-- evita a inserção de uma nova consulta em um dia e horário que o doutor não atende
 CREATE TRIGGER `check_appointment_start_time`
   BEFORE INSERT ON `appointment`
   FOR EACH ROW
   BEGIN
     SET @not_exists = NOT EXISTS (
-      SELECT `hour`
-      FROM `doctor_week_opening_hour` AS `woh`
-      WHERE `woh`.`doctor_id`=NEW.`doctor_id` AND `woh`.`weekday`=DAYNAME(NEW.`date`)
+      SELECT
+        *
+      FROM 
+        `doctor_week_opening_hour` AS `woh`
+      WHERE 
+        `woh`.`doctor_id`=NEW.`doctor_id` AND 
+        `woh`.`weekday`=DAYNAME(NEW.`date`) AND
+        `woh`.`hour`=NEW.`start_time`
     );
     IF @not_exists THEN
       SET @msg = CONCAT_WS(' ', 'The doctor', NEW.`doctor_id`, 'does not work at', NEW.`start_time`, 'on', DAYNAME(NEW.`date`));
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
     END IF;
   END $$
+
 -- evita a inserção de um doutor com o id de um usuário que já é paciente
 CREATE TRIGGER `check_doctor_disjoint`
   BEFORE INSERT ON `doctor`
   FOR EACH ROW
   BEGIN
-    SET @exists = EXISTS (SELECT * FROM `patient` WHERE `id` = NEW.`id`);
+    SET @exists = EXISTS (
+      SELECT * 
+      FROM `patient` 
+      WHERE `id` = NEW.`id`
+    );
     IF @exists THEN
       SET @msg = CONCAT_WS(' ', 'The user', NEW.`id`, 'is already a patient');
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
@@ -260,7 +268,11 @@ CREATE TRIGGER `check_patient_disjoint`
   BEFORE INSERT ON `patient`
   FOR EACH ROW
   BEGIN
-    SET @exists = EXISTS (SELECT * FROM `doctor` WHERE `id` = NEW.`id`);
+    SET @exists = EXISTS (
+      SELECT *
+      FROM `doctor`
+      WHERE `id` = NEW.`id`
+    );
     IF @exists THEN
       SET @msg = CONCAT_WS(' ', 'The user', NEW.`id`, 'is already a doctor');
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;

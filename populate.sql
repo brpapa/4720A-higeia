@@ -191,9 +191,9 @@ INSERT INTO `appointment`(`date`, `start_time`, `doctor_id`, `patient_id`, `stat
   ('2020-07-27', '10:00', 'bpapa', 'jtalamonte', 'scheduled'),
   ('2020-07-29', '14:00', 'bpapa', 'vmartins', 'scheduled'),
   ('2020-07-30', '16:00', 'bpapa', 'halmeida', 'cancelled'),
-  ('2020-07-23', '14:00', 'fbartoli', 'ecosta', 'scheduled'),
+  ('2020-07-23', '08:00', 'fbartoli', 'ecosta', 'scheduled'),
   ('2020-07-30', '18:00', 'masilva', 'imontenegro', 'scheduled'),
-  ('2020-07-23', '14:00', 'thenrique', 'ecosta', 'scheduled');
+  ('2020-07-23', '16:00', 'thenrique', 'ecosta', 'scheduled');
 
 -- insere medicamentos
 INSERT INTO `medicine`(`name`, `concentration_in_mg`, `way_of_use`) VALUES
