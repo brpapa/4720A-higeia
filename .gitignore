@@ -1,6 +1,6 @@
 _*
+*.txt
 .env
-
-web/node_modules
+**/node_modules
 web/build
 

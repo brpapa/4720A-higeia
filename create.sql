@@ -61,7 +61,7 @@ CREATE TABLE `doctor_specialization` (
 
 CREATE TABLE `doctor_medical_care_location` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NOT NULL, 
+  `name` VARCHAR(255) NOT NULL,
   `type` ENUM('Medical Clinic', 'Medical Office', 'Medical Center') NOT NULL,
   `address_id` INT NOT NULL,
 
@@ -178,7 +178,7 @@ DROP TRIGGER IF EXISTS `check_patient_disjoint`;
 -- necessário para a declaração de 'stored programs', como procedures e triggers
 DELIMITER $$
 
--- recebe o id de um doutor e atualiza o seu avg_rating com base no rating de suas consultas que estão 'completed'
+-- recebe o id de um doutor e atualiza o seu avg_rating com base nas suas consultas que estão 'completed' e possuem rating não nulo
 CREATE PROCEDURE `update_avg_rating`(IN `doctor_id` VARCHAR(255))
   BEGIN
     UPDATE `doctor`
@@ -234,10 +234,10 @@ CREATE TRIGGER `check_appointment_start_time`
     SET @not_exists = NOT EXISTS (
       SELECT
         *
-      FROM 
+      FROM
         `doctor_week_opening_hour` AS `woh`
-      WHERE 
-        `woh`.`doctor_id`=NEW.`doctor_id` AND 
+      WHERE
+        `woh`.`doctor_id`=NEW.`doctor_id` AND
         `woh`.`weekday`=DAYNAME(NEW.`date`) AND
         `woh`.`hour`=NEW.`start_time`
     );
@@ -253,8 +253,8 @@ CREATE TRIGGER `check_doctor_disjoint`
   FOR EACH ROW
   BEGIN
     SET @exists = EXISTS (
-      SELECT * 
-      FROM `patient` 
+      SELECT *
+      FROM `patient`
       WHERE `id` = NEW.`id`
     );
     IF @exists THEN

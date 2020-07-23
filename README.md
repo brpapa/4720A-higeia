@@ -1,3 +1,8 @@
+<!-- # Description -->
+
+<!-- ## Screenshots -->
+
+
 # Installation
 
 For run this project locally, you need have installed on your SO:
@@ -8,15 +13,17 @@ For run this project locally, you need have installed on your SO:
 
 ## Database
 
+<!-- mysql --user=root --password=123456789 --database=higeia -->
+
 After setup and connect to your local database:
 
-Run the script `create.sql` to create the tables and triggers of the database.
+  - Run the script `create.sql` to create the tables and triggers of the database.
 
-Run the script `populate.sql` to fake populate the database.
+  - Run the script `populate.sql` to fake populate the database.
 
 ## API Server
 
-Inside the folder `api`, you must create a `.env` file based on the `.env.example` to set your own configs related to your local database, and run:
+Inside `packages/api`, you must create a `.env` file based on the `.env.example` to set your own configs related to your local database, and run:
 
 ```bash
 # To install all dependencies listed on the `package.json` file.
@@ -28,7 +35,7 @@ Inside the folder `api`, you must create a `.env` file based on the `.env.exampl
 
 ## Web Client
 
-Inside the folder `web`, you must alter the file `src/services/api.ts` with the port you set above, and run:
+Inside `packages/web`, you must alter the file `src/services/api.ts` with the port you set above, and run:
 
 ```bash
 # To install all dependencies listed on the `package.json` file.
@@ -41,7 +48,7 @@ Inside the folder `web`, you must alter the file `src/services/api.ts` with the 
 > yarn build
 ```
 
-# About the project
+# About
 
 This project was my final work for the discipline "4720A - Data Base I", in july 2020.
 
@@ -49,7 +56,7 @@ This project was my final work for the discipline "4720A - Data Base I", in july
 
 ![erd](./erd.png)
 
-## Implemented Use Cases
+## Use Cases
 
 ### Unlogged user
 
@@ -100,7 +107,7 @@ This project was my final work for the discipline "4720A - Data Base I", in july
 - [x] **Active prescriptions**
 
   - [x] View a list of your medical prescriptions that are still in effect, that is, only those with expiration date later than or equal to the current date.
-  
+
   - [x] For each prescription, you can view the medicine name, the start and expiration date, the details (dose and frequency) and the doctor who prescribed it.
 
 - [ ] **View details of a completed appointment**
@@ -115,7 +122,7 @@ This project was my final work for the discipline "4720A - Data Base I", in july
 
 - [ ] **Next appointments**
 
-  - [ ] View a list of your next appointments, that is, those with date 
+  - [ ] View a list of your next appointments, that is, those with date later than the current one.
 
 - [ ] **Last activities**
 

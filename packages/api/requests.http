@@ -1,0 +1,70 @@
+@host = http://localhost:3030
+
+###
+GET {{host}}/patients/asilveira
+Authorization: Basic bpapa:123
+
+###
+GET {{host}}/doctors
+Authorization: Basic bpapa:123
+
+###
+DELETE {{host}}/users/fbartoli
+Authorization: Basic bpapa:123
+
+###
+GET {{host}}/doctors/opening-hours/bpapa?date=2020-07-08
+Authorization: Basic bpapa:123
+
+###
+GET {{host}}/appointments/scheduled/doctor/bpapa
+Authorization: Basic bpapa:123
+
+###
+POST {{host}}/appointments
+Authorization: Basic bpapa:123
+content-type: application/json
+
+{
+	"doctor_id": "bruno",
+	"patient_id": "fabio",
+	"date": "2020-07-14",
+	"start_time": "08:00",
+	"status": "scheduled"
+}
+
+###
+PUT {{host}}/appointments/0
+Authorization: Basic bpapa:123
+content-type: application/json
+
+{
+	"status": "cancelled",
+	"doctor_notes": "test", 
+	"doctor_diagnosis": "uhu",
+	"rating": 4
+}
+
+###
+GET {{host}}/medicines
+Authorization: Basic bpapa:123
+
+###
+GET {{host}}/prescriptions/patient/asilveira
+Authorization: Basic bpapa:123
+
+###
+POST {{host}}/prescriptions
+Authorization: Basic bpapa:123
+content-type: application/json
+
+{
+	"appt_id": 1,
+	"medicine_id": 2,
+	"start_date": "2020-06-20",
+	"expiration_date": "2020-07-20",
+  	"dose": 1,
+  	"dose_unit": "mg",
+  	"frequency": 1,
+  	"frequency_per": "hour"
+}
