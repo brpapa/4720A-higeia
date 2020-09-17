@@ -12,6 +12,9 @@ This project was my final work for the discipline "4720A - Data Base I", in july
   - [Logged patient user](#logged-patient-user)
   - [Logged doctor user](#logged-doctor-user)
 - [Installation](#installation)
+  - [Database](#database)
+  - [API server](#api-server)
+  - [Web client](#web-client)
 
 # Overview
 
@@ -121,7 +124,7 @@ After setup and connect to your local database:
 
   - Run the script `populate.sql` to fake populate the database.
 
-## API Server
+## API server
 
 Inside `packages/api`, you must create a `.env` file based on the `.env.example` to set your own configs related to your local database, and run:
 
@@ -133,7 +136,7 @@ Inside `packages/api`, you must create a `.env` file based on the `.env.example`
 > yarn start
 ```
 
-## Web Client
+## Web client
 
 Inside `packages/web`, you must alter the file `src/services/api.ts` with the port you set above, and run:
 
